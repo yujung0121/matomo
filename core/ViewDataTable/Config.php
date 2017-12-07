@@ -10,6 +10,7 @@
 namespace Piwik\ViewDataTable;
 
 use Piwik\API\Request as ApiRequest;
+use Piwik\Columns\Dimension;
 use Piwik\Common;
 use Piwik\Container\StaticContainer;
 use Piwik\DataTable;
@@ -506,6 +507,15 @@ class   Config
             Metrics::getDefaultMetrics(),
             Metrics::getDefaultProcessedMetrics()
         );
+
+        foreach (Dimension::getAllDimensions() as $dimension) {
+            $dimensionId = str_replace('.', '_', $dimension->getId());
+            $dimensionName = $dimension->getName();
+
+            if (!empty($dimensionId) && !empty($dimensionName)) {
+                $this->translations[$dimensionId] = $dimensionName;
+            }
+        }
 
         $this->show_title = (bool)Common::getRequestVar('showtitle', 0, 'int');
     }

@@ -102,6 +102,18 @@ class Flattener extends DataTableManipulator
     private function flattenRow(Row $row, $rowId, DataTable $dataTable, $dimensionName,
                                 $labelPrefix = '', $parentLogo = false)
     {
+        $dimensions = $dataTable->getMetadata('dimensions');
+
+        if (empty($dimensions)) {
+            $dimensions = [];
+        }
+
+        if (!in_array($dimensionName, $dimensions)) {
+            $dimensions[] = $dimensionName;
+        }
+
+        $dataTable->setMetadata('dimensions', $dimensions);
+
         $origLabel = $label = $row->getColumn('label');
 
         if ($label !== false) {
