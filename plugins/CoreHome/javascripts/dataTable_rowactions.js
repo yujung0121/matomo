@@ -419,5 +419,5 @@ DataTable_RowActions_RowEvolution.prototype.showRowEvolution = function (apiMeth
     ajaxRequest.addParams(requestParams, 'get');
     ajaxRequest.setCallback(callback);
     ajaxRequest.setFormat('html');
-    ajaxRequest.send(false);
+    ajaxRequest.send();
 };

@@ -265,7 +265,7 @@ var Piwik_Popover = (function () {
             ajaxRequest.addParams(piwikHelper.getArrayFromQueryString(url), 'get');
             ajaxRequest.setCallback(callback);
             ajaxRequest.setFormat('html');
-            ajaxRequest.send(false);
+            ajaxRequest.send();
         }
     };
 })();
