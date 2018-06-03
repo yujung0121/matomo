@@ -8,6 +8,7 @@
  */
 
 var fs = require('fs'),
+    path = require('path'),
     testingEnvironmentOverridePath = path.join(PIWIK_INCLUDE_PATH, '/tmp/testingPathOverride.json');
 
 var DEFAULT_UI_TEST_FIXTURE_NAME = "Piwik\\Tests\\Fixtures\\UITestFixture";
@@ -27,8 +28,8 @@ TestingEnvironment.prototype.reload = function () {
     this['testUseMockAuth'] = true;
     this['configOverride'] = {};
 
-    if (fs.exists(testingEnvironmentOverridePath)) {
-        var data = JSON.parse(fs.read(testingEnvironmentOverridePath));
+    if (fs.existsSync(testingEnvironmentOverridePath)) {
+        var data = JSON.parse(fs.readFileSync(testingEnvironmentOverridePath));
         for (var key in data) {
             this[key] = data[key];
         }
@@ -68,7 +69,7 @@ TestingEnvironment.prototype.save = function () {
         copy[key] = this[key];
     }
 
-    fs.write(testingEnvironmentOverridePath, JSON.stringify(copy));
+    fs.writeFileSync(testingEnvironmentOverridePath, JSON.stringify(copy));
 };
 
 TestingEnvironment.prototype.callApi = function (method, params, done) {
@@ -142,7 +143,7 @@ TestingEnvironment.prototype.executeConsoleCommand = function (command, args, ca
             firstLine = false;
         }
 
-        fs.write("/dev/stdout", data.replace(/\n/g, "\n    "), "w");
+        process.stdout.write(data.toString().replace(/\n/g, "\n    "));
     });
 
     child.stderr.on("data", function (data) {
@@ -151,7 +152,7 @@ TestingEnvironment.prototype.executeConsoleCommand = function (command, args, ca
             firstLine = false;
         }
 
-        fs.write("/dev/stderr", data, "w");
+        process.stderr.write(data);
     });
 
     child.on("exit", callback);
@@ -269,7 +270,7 @@ TestingEnvironment.prototype.teardownFixture = function (fixtureClass, done) {
 };
 
 TestingEnvironment.prototype.deleteAndSave = function () {
-    fs.write(testingEnvironmentOverridePath, "{}");
+    fs.writeFileSync(testingEnvironmentOverridePath, "{}");
     this.reload();
 };
 
