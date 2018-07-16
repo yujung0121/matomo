@@ -48,7 +48,7 @@ class Environment
     public function getNumWebsites()
     {
         if (!isset($this->websitesCache)) {
-            $this->websitesCache = (int) Db::get()->fetchOne('SELECT count(idsite) FROM ' . Common::prefixTable('site'));
+            $this->websitesCache = (int) Db::get()->fetchOne('SELECT count(idsite) FROM ' . Common::prefixTable('site') . ' WHERE deleted = 0');
         }
 
         return $this->websitesCache;

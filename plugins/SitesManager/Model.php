@@ -43,7 +43,7 @@ class Model
     {
         $db = $this->getDb();
         $sites = $db->fetchAll("SELECT * FROM " . $this->table . "
-                                WHERE `group` = ?", $group);
+                                WHERE `group` = ? AND deleted = 0", $group);
 
         return $sites;
     }
@@ -57,7 +57,7 @@ class Model
     public function getSitesGroups()
     {
         $db = $this->getDb();
-        $groups = $db->fetchAll("SELECT DISTINCT `group` FROM " . $this->table);
+        $groups = $db->fetchAll("SELECT DISTINCT `group` FROM " . $this->table . " WHERE deleted = 0");
 
         $cleanedGroups = array();
         foreach ($groups as $group) {
@@ -75,7 +75,7 @@ class Model
     public function getAllSites()
     {
         $db = $this->getDb();
-        $sites = $db->fetchAll("SELECT * FROM " . $this->table . " ORDER BY idsite ASC");
+        $sites = $db->fetchAll("SELECT * FROM " . $this->table . " WHERE deleted = 0 ORDER BY idsite ASC");
 
         return $sites;
     }
@@ -91,7 +91,7 @@ class Model
     {
         $sites = Db::fetchAll("
             SELECT idsite FROM " . $this->table . " s
-            WHERE EXISTS (
+            WHERE deleted = 0 AND EXISTS (
                 SELECT 1
                 FROM " . Common::prefixTable('log_visit') . " v
                 WHERE v.idsite = s.idsite
@@ -117,10 +117,10 @@ class Model
         $db = $this->getDb();
         $ids = $db->fetchAll(
             'SELECT idsite FROM ' . $this->table . '
-                    WHERE main_url IN ( ' . Common::getSqlStringFieldsArray($urls) . ') ' .
+                    WHERE deleted = 0 AND main_url IN ( ' . Common::getSqlStringFieldsArray($urls) . ') ' .
             'UNION
                 SELECT idsite FROM ' . $siteUrlTable . '
-                    WHERE url IN ( ' . Common::getSqlStringFieldsArray($urls) . ') ',
+                    WHERE deleted = 0 AND url IN ( ' . Common::getSqlStringFieldsArray($urls) . ') ',
 
             // Bind
             array_merge( $urls, $urls)
@@ -145,12 +145,12 @@ class Model
         $ids = $db->fetchAll(
             'SELECT idsite
                 FROM ' . $this->table . '
-                    WHERE main_url IN ( ' . Common::getSqlStringFieldsArray($urls) . ')' .
+                    WHERE deleted = 0 AND main_url IN ( ' . Common::getSqlStringFieldsArray($urls) . ')' .
             'AND idsite IN (' . $sqlAccessSite . ') ' .
             'UNION
                 SELECT idsite
                 FROM ' . $siteUrlTable . '
-                    WHERE url IN ( ' . Common::getSqlStringFieldsArray($urls) . ')' .
+                    WHERE deleted = 0 AND url IN ( ' . Common::getSqlStringFieldsArray($urls) . ')' .
             'AND idsite IN (' . $sqlAccessSite . ')',
 
             // Bind
@@ -174,7 +174,7 @@ class Model
     public function getSitesFromTimezones($timezones)
     {
         $query = 'SELECT idsite FROM ' . $this->table . '
-                  WHERE timezone IN (' . Common::getSqlStringFieldsArray($timezones) . ')
+                  WHERE deleted = 0 AND timezone IN (' . Common::getSqlStringFieldsArray($timezones) . ')
                   ORDER BY idsite ASC';
         $db = $this->getDb();
         $sites = $db->fetchAll($query, $timezones);
@@ -182,11 +182,35 @@ class Model
         return $sites;
     }
 
+    /**
+     * Marks a site as deleted
+     *
+     * @param $idSite
+     */
     public function deleteSite($idSite)
     {
         $db = $this->getDb();
 
-        $db->query("DELETE FROM " . $this->table . " WHERE idsite = ?", $idSite);
+        $db->query("UPDATE " . $this->table . " SET deleted = 1 WHERE idsite = ?", $idSite);
+    }
+
+    /**
+     * Permanently removes a site
+     *
+     * @param $idSite
+     * @throws Exception
+     */
+    public function truncateSite($idSite)
+    {
+        $db = $this->getDb();
+
+        $this->getSiteFromId($idSite);
+
+        if (!empty($idSite)) {
+            throw new \Exception('Truncation failed. Only deleted sites can be truncated');
+        }
+
+        $db->query("DELETE FROM " . $this->table . " WHERE idsite = ? AND deleted = 1", $idSite);
         $db->query("DELETE FROM " . Common::prefixTable("site_url") . " WHERE idsite = ?", $idSite);
         $db->query("DELETE FROM " . Common::prefixTable("access") . " WHERE idsite = ?", $idSite);
     }
@@ -214,7 +238,7 @@ class Model
 
         $db    = $this->getDb();
         $sites = $db->fetchAll("SELECT * FROM " . $this->table . "
-                                WHERE idsite IN (" . implode(", ", $idSites) . ")
+                                WHERE deleted = 0 AND idsite IN (" . implode(", ", $idSites) . ")
                                 ORDER BY idsite ASC $limit");
 
         return $sites;
@@ -231,7 +255,7 @@ class Model
     {
         $db = $this->getDb();
         $site = $db->fetchRow("SELECT * FROM " . $this->table . "
-                               WHERE idsite = ?", $idSite);
+                               WHERE deleted = 0 AND idsite = ?", $idSite);
 
         return $site;
     }
@@ -244,7 +268,7 @@ class Model
      */
     public function getSitesId()
     {
-        $result = Db::fetchAll("SELECT idsite FROM " . Common::prefixTable('site'));
+        $result = Db::fetchAll("SELECT idsite FROM " . Common::prefixTable('site') . " WHERE deleted = 0");
 
         $idSites = array();
         foreach ($result as $idSite) {
@@ -298,14 +322,13 @@ class Model
      * Returns the list of alias URLs registered for the given idSite.
      * The website ID must be valid when calling this method!
      *
-     * @param int $idSite
      * @return array list of alias URLs
      */
     public function getAllKnownUrlsForAllSites()
     {
         $db        = $this->getDb();
-        $mainUrls  = $db->fetchAll("SELECT idsite, main_url as url FROM " . Common::prefixTable("site"));
-        $aliasUrls = $db->fetchAll("SELECT idsite, url FROM " . Common::prefixTable("site_url"));
+        $mainUrls  = $db->fetchAll("SELECT idsite, main_url as url FROM " . Common::prefixTable("site") . " WHERE deleted = 0");
+        $aliasUrls = $db->fetchAll("SELECT idsite, url FROM " . Common::prefixTable("site_url") . " WHERE idsite IN (SELECT idsite FROM " . Common::prefixTable("site") . " WHERE deleted = 0)");
 
         return array_merge($mainUrls, $aliasUrls);
     }
@@ -325,7 +348,7 @@ class Model
      */
     public function getUniqueSiteTimezones()
     {
-        $results = Db::fetchAll("SELECT distinct timezone FROM " . $this->table);
+        $results = Db::fetchAll("SELECT distinct timezone FROM " . $this->table . " WHERE deleted = 0");
 
         $timezones = array();
         foreach ($results as $result) {
@@ -348,7 +371,7 @@ class Model
         $idSites   = array_map('intval', $idSites);
 
         $query = "UPDATE " . $this->table . " SET ts_created = ?" .
-                " WHERE idsite IN ( " . implode(",", $idSites) . " ) AND ts_created > ?";
+                " WHERE deleted = 0 AND idsite IN ( " . implode(",", $idSites) . " ) AND ts_created > ?";
 
         $bind  = array($minDateSql, $minDateSql);
 
@@ -364,7 +387,7 @@ class Model
         $types = array();
 
         $db   = $this->getDb();
-        $rows = $db->fetchAll("SELECT DISTINCT `type` as typeid FROM " . $this->table);
+        $rows = $db->fetchAll("SELECT DISTINCT `type` as typeid FROM " . $this->table . " WHERE deleted = 0");
 
         foreach ($rows as $row) {
             $types[] = $row['typeid'];
@@ -406,7 +429,8 @@ class Model
 
         $query = "SELECT *
                   FROM " . $this->table . " s
-                  WHERE (    s.name like ?
+                  WHERE deleted = 0 AND
+                        (    s.name like ?
                           OR s.main_url like ?
                           OR s.`group` like ?
                           $where )
