@@ -572,7 +572,7 @@ class Url
             return false;
         }
 
-        return in_array($host, Url::getLocalHostnames(), true);
+        return in_array($host, Url::getLocalHostnames());
     }
 
     public static function getTrustedHostsFromConfig()
