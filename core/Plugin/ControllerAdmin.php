@@ -151,7 +151,7 @@ abstract class ControllerAdmin extends Controller
             return;
         }
 
-        $message = 'travis host: ' . '<pre>'.Url::getCurrentHost() . ' ' . print_r(Url::getLocalHostnames(), true) . '</pre> ';
+        $message = 'travis host: ' . '<pre>'.var_export(rawurlencode(Url::getCurrentHost()), true) . ' ' . var_export(rawurlencode($_SERVER['HTTP_HOST']), true) . '</pre> ';
         $message .= Piwik::translate('General_CurrentlyUsingUnsecureHttp');
 
         $message .= " ";
