@@ -473,7 +473,7 @@ describe("UIIntegrationTest", function () { // TODO: Rename to Piwik?
     });
 
     // Admin user settings (plugins not displayed)
-    it('should load the Manage > Websites admin page correctly', function (done) {
+    it.only('should load the Manage > Websites admin page correctly', function (done) {
         expect.screenshot('admin_manage_websites').to.be.captureSelector('.pageWrap', function (page) {
             page.load("?" + generalParams + "&module=SitesManager&action=index");
             page.evaluate(function () {
