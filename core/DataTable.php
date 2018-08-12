@@ -1334,7 +1334,9 @@ class DataTable implements DataTableInterface, \IteratorAggregate, \ArrayAccess
     private function unserializeRows($serialized)
     {
         $serialized = str_replace(self::$previousRowClasses, self::$rowClassToUseForUnserialize, $serialized);
-        $rows = unserialize($serialized);
+        $rows = Common::safe_unserialize($serialized, [
+            \Piwik_DataTable_SerializedRow::class
+        ]);
 
         if ($rows === false) {
             throw new Exception("The unserialization has failed!");
