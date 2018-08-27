@@ -45,7 +45,7 @@ describe("CoreUpdaterDb", function () {
             });
         });
 
-        expect(await page.screenshot({ fullPage: true })).to.matchImage('main');
+        expect(await page.screenshotSelector('body')).to.matchImage('main');
     });
 
     it("should show instance id in updating screen", async function() {
@@ -62,13 +62,13 @@ describe("CoreUpdaterDb", function () {
             });
         });
 
-        expect(await page.screenshot({ fullPage: true })).to.matchImage('main_instance');
+        expect(await page.screenshotSelector('body')).to.matchImage('main_instance');
     });
 
     it("should show the donation form when the update process is complete", async function() {
         await page.click('.btn');
         await page.waitForNetworkIdle();
 
-        expect(await page.screenshot({ fullPage: true })).to.matchImage('updated');
+        expect(await page.screenshotSelector('body')).to.matchImage('updated');
     });
 });
