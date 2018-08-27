@@ -51,7 +51,7 @@ describe("UsersManager", function () {
         });
 
         await page.click('th.role_header .siteSelector a.title');
-        await page.waitForNetworkIdle();
+        await page.waitForSelector('.siteSelector .custom_select_container a');
         var elem = await page.jQuery('.siteSelector .custom_select_container a:contains(relentless)');
         await elem.click();
         await page.waitForNetworkIdle();
