@@ -171,7 +171,8 @@ describe("Dashboard", function () {
         var button = await page.jQuery('.modal.open .modal-footer a:contains(Yes)');
         await button.click();
 
-        // page.mouseMove('.dashboard-manager');
+        await page.waitFor(250);
+        await page.mouse.move(-10, -10);
 
         expect(await page.screenshot({ fullPage: true })).to.matchImage('widget_move_removed');
     });
