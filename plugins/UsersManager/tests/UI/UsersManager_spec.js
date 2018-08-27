@@ -23,8 +23,7 @@ describe("UsersManager", function () {
     it('should display the manage users page correctly', async function () {
         await page.goto(url);
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('load');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('load');
     });
 
     it('should change the results page when next is clicked', async function () {
@@ -32,8 +31,7 @@ describe("UsersManager", function () {
         await page.mouse.move(-10, -10);
         await page.waitForNetworkIdle();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('next_click');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('next_click');
     });
 
     it('should filter by username and access level when the inputs are filled', async function () {
@@ -43,8 +41,7 @@ describe("UsersManager", function () {
         });
         await page.waitForNetworkIdle();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('filters');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('filters');
     });
 
     it('should display access for a different site when the roles for select is changed', async function () {
@@ -59,8 +56,7 @@ describe("UsersManager", function () {
         await elem.click();
         await page.waitForNetworkIdle();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('role_for');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('role_for');
     });
 
     it('should select rows when individual row select is clicked', async function () {
@@ -68,31 +64,27 @@ describe("UsersManager", function () {
         await (await page.jQuery('td.select-cell label:eq(3)')).click();
         await (await page.jQuery('td.select-cell label:eq(8)')).click();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('rows_selected');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('rows_selected');
     });
 
     it('should select all rows when all row select is clicked', async function () {
         await page.click('th.select-cell label');
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('all_rows_selected');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('all_rows_selected');
     });
 
     it('should select all rows in search when link in table is clicked', async function () {
         await page.click('.toggle-select-all-in-search');
         await page.mouse.move(0, 0);
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('all_rows_in_search');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('all_rows_in_search');
     });
 
     it('should deselect all rows in search except for displayed rows when link in table is clicked again', async function () {
         await page.click('.toggle-select-all-in-search');
         await page.mouse.move(0, 0);
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('all_rows_selected');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('all_rows_selected');
     });
 
     it('should show bulk action confirm when bulk change access option used', async function () {
@@ -107,16 +99,14 @@ describe("UsersManager", function () {
         await (await page.jQuery('#user-list-bulk-actions>li:first')).hover();
         await (await page.jQuery('#bulk-set-access a:contains(Admin)')).click();
 
-        pageWrap = await page.$('.change-user-role-confirm-modal');
-        expect(await pageWrap.screenshot()).to.matchImage('bulk_set_access_confirm');
+        expect(await page.screenshotSelector('.change-user-role-confirm-modal')).to.matchImage('bulk_set_access_confirm');
     });
 
     it('should change access for all rows in search when confirmed', async function () {
         await (await page.jQuery('.change-user-role-confirm-modal .modal-close:not(.modal-no)')).click();
         await page.waitForNetworkIdle();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('bulk_set_access');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('bulk_set_access');
     });
 
     it('should remove access to the currently selected site when the bulk remove access option is clicked', async function () {
@@ -127,16 +117,14 @@ describe("UsersManager", function () {
         await (await page.jQuery('.change-user-role-confirm-modal .modal-close:not(.modal-no)')).click();
         await page.waitForNetworkIdle();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('bulk_remove_access');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('bulk_remove_access');
     });
 
     it('should go back to first page when previous button is clicked', async function () {
         await page.click('.usersListPagination .btn.prev');
         await page.waitForNetworkIdle();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('previous');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('previous');
     });
 
     it('should delete a single user when the modal is confirmed is clicked', async function () {
@@ -144,8 +132,7 @@ describe("UsersManager", function () {
         await (await page.jQuery('.delete-user-confirm-modal .modal-close:not(.modal-no)')).click();
         await page.waitForNetworkIdle();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('delete_single');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('delete_single');
     });
 
     it('should delete selected users when delete users bulk action is used', async function () {
@@ -156,16 +143,14 @@ describe("UsersManager", function () {
         await (await page.jQuery('.delete-user-confirm-modal .modal-close:not(.modal-no)')).click();
         await page.waitForNetworkIdle();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('delete_bulk_access');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('delete_bulk_access');
     });
 
     it('should show the add new user form when the add new user button is clicked', async function () {
         await page.click('.add-user-container .btn');
         await page.waitForNetworkIdle();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('add_new_user_form');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('add_new_user_form');
     });
 
     it('should create a user and show the edit user form when the create user button is clicked', async function () {
@@ -179,16 +164,14 @@ describe("UsersManager", function () {
         await page.click('piwik-user-edit-form [piwik-save-button]');
         await page.waitForNetworkIdle();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('user_created');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('user_created');
     });
 
     it('should show the permissions edit when the permissions tab is clicked', async function () {
         await page.click('.userEditForm .menuPermissions');
         await page.mouse.move(0, 0);
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('permissions_edit');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('permissions_edit');
     });
 
     it('should select all sites in search when in table link is clicked', async function () {
@@ -201,8 +184,7 @@ describe("UsersManager", function () {
         await page.click('.userPermissionsEdit th.select-cell label');
         await page.click('.userPermissionsEdit tr.select-all-row a');
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('permissions_all_rows_in_search');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('permissions_all_rows_in_search');
     });
 
     it('should add access to all websites when bulk access is used on all websites in search', async function () {
@@ -212,16 +194,14 @@ describe("UsersManager", function () {
 
         await (await page.jQuery('.change-access-confirm-modal .modal-close:not(.modal-no)')).click();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('permissions_all_sites_access');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('permissions_all_sites_access');
     });
 
     it('should go to the next results page when the next button is clicked', async function () {
         await page.click('.sites-for-permission-pagination a.next');
         await page.waitForNetworkIdle();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('permissions_next');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('permissions_next');
     });
 
     it('should remove access to a single site when the trash icon is used', async function () {
@@ -229,8 +209,7 @@ describe("UsersManager", function () {
         await (await page.jQuery('.delete-access-confirm-modal .modal-close:not(.modal-no)')).click();
         await page.waitForNetworkIdle();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('permissions_remove_single');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('permissions_remove_single');
     });
 
     it('should select multiple rows when individual row selects are clicked', async function () {
@@ -250,8 +229,7 @@ describe("UsersManager", function () {
         await (await page.jQuery('.change-access-confirm-modal .modal-close:not(.modal-no)')).click();
         await page.waitForNetworkIdle();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('permissions_bulk_access_set');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('permissions_bulk_access_set');
     });
 
     it('should filter the permissions when the filters are used', async function () {
@@ -261,15 +239,13 @@ describe("UsersManager", function () {
         });
         await page.waitForNetworkIdle();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('permissions_filters');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('permissions_filters');
     });
 
     it('should select all displayed rows when the select all checkbox is clicked', async function () {
         await page.click('.userPermissionsEdit th.select-cell label');
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('permissions_select_all');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('permissions_select_all');
     });
 
     it('should set access to all sites selected when set bulk access is used', async function () {
@@ -284,8 +260,7 @@ describe("UsersManager", function () {
         });
         await page.waitForNetworkIdle();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('permissions_bulk_access_set_all');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('permissions_bulk_access_set_all');
     });
 
     it('should set access to single site when select in table is used', async function () {
@@ -296,8 +271,7 @@ describe("UsersManager", function () {
         await (await page.jQuery('.change-access-confirm-modal .modal-close:not(.modal-no)')).click();
         await page.waitForNetworkIdle();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('permissions_single_site_access');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('permissions_single_site_access');
     });
 
     it('should remove access to displayed rows when remove bulk access is clicked', async function () {
@@ -316,31 +290,27 @@ describe("UsersManager", function () {
         await (await page.jQuery('.delete-access-confirm-modal .modal-close:not(.modal-no)')).click();
         await page.waitForNetworkIdle();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('permissions_remove_access');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('permissions_remove_access');
     });
 
     it('should display the superuser access tab when the superuser tab is clicked', async function () {
         await page.click('.userEditForm .menuSuperuser');
         await page.mouse.move(0, 0);
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('superuser_tab');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('superuser_tab');
     });
 
     it('should show superuser confirm modal when the superuser toggle is clicked', async function () {
         await page.click('.userEditForm #superuser_access+label');
 
-        pageWrap = await page.$('.superuser-confirm-modal');
-        expect(await pageWrap.screenshot()).to.matchImage('superuser_confirm');
+        expect(await page.screenshotSelector('.superuser-confirm-modal')).to.matchImage('superuser_confirm');
     });
 
     it('should give the user superuser access when the superuser modal is confirmed', async function () {
         await page.click('.superuser-confirm-modal .modal-close:not(.modal-no)');
         await page.waitForNetworkIdle();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('superuser_set');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('superuser_set');
     });
 
     it('should go back to the manage users page when the back link is clicked', async function () {
@@ -351,16 +321,14 @@ describe("UsersManager", function () {
         });
         await page.waitForNetworkIdle();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('manage_users_back');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('manage_users_back');
     });
 
     it('should show the edit user form when the edit icon in a row is clicked', async function () {
         await (await page.jQuery('button.edituser:eq(0)')).click();
         await page.waitForNetworkIdle();
 
-        pageWrap = await page.$('.usersManager');
-        expect(await pageWrap.screenshot()).to.matchImage('edit_user_form');
+        expect(await page.screenshotSelector('.usersManager')).to.matchImage('edit_user_form');
     });
 
     // admin user tests
@@ -388,16 +356,14 @@ describe("UsersManager", function () {
         it('should hide columns & functionality if an admin user views the manage user page', async function () {
             await page.goto(url);
 
-            pageWrap = await page.$('.usersManager');
-            expect(await pageWrap.screenshot()).to.matchImage('admin_load');
+            expect(await page.screenshotSelector('.usersManager')).to.matchImage('admin_load');
         });
 
         it('should show the add user form for admin users', async function () {
             await page.click('.add-user-container .btn');
             await page.waitForNetworkIdle();
 
-            pageWrap = await page.$('.usersManager');
-            expect(await pageWrap.screenshot()).to.matchImage('admin_add_user');
+            expect(await page.screenshotSelector('.usersManager')).to.matchImage('admin_add_user');
         });
 
         it('should not allow editing basic info for admin users', async function () {
@@ -407,15 +373,13 @@ describe("UsersManager", function () {
             await (await page.jQuery('button.edituser:eq(0)')).click();
             await page.waitForNetworkIdle();
 
-            pageWrap = await page.$('.usersManager');
-            expect(await pageWrap.screenshot()).to.matchImage('edit_user_basic_info');
+            expect(await page.screenshotSelector('.usersManager')).to.matchImage('edit_user_basic_info');
         });
 
         it('should allow editing user permissions for admin users', async function () {
             await page.click('.userEditForm .menuPermissions');
 
-            pageWrap = await page.$('.usersManager');
-            expect(await pageWrap.screenshot()).to.matchImage('admin_edit_permissions');
+            expect(await page.screenshotSelector('.usersManager')).to.matchImage('admin_edit_permissions');
         });
 
         it('should show the add existing user modal', async function () {
@@ -426,8 +390,7 @@ describe("UsersManager", function () {
             await page.click('.add-existing-user');
             await page.waitFor(500); // wait for animation
 
-            pageWrap = await page.$('.add-existing-user-modal');
-            expect(await pageWrap.screenshot()).to.matchImage('admin_existing_user_modal');
+            expect(await page.screenshotSelector('.add-existing-user-modal')).to.matchImage('admin_existing_user_modal');
         });
 
         it('should add a user by email when an email is entered', async function () {
@@ -440,8 +403,7 @@ describe("UsersManager", function () {
             });
             await page.waitFor(500);
 
-            pageWrap = await page.$('.usersManager');
-            expect(await pageWrap.screenshot()).to.matchImage('admin_add_user_by_email');
+            expect(await page.screenshotSelector('.usersManager')).to.matchImage('admin_add_user_by_email');
         });
 
         it('should add a user by username when a username is entered', async function () {
@@ -454,8 +416,7 @@ describe("UsersManager", function () {
                 $('#user-text-filter').val('10_login8').change();
             });
 
-            pageWrap = await page.$('.usersManager');
-            expect(await pageWrap.screenshot()).to.matchImage('admin_add_user_by_login');
+            expect(await page.screenshotSelector('.usersManager')).to.matchImage('admin_add_user_by_login');
         });
 
         it('should fail if an email/username that does not exist is entered', async function () {
@@ -468,8 +429,7 @@ describe("UsersManager", function () {
                 $('#user-text-filter').val('sldkjfsdlkfjsdkl').change();
             });
 
-            pageWrap = await page.$('.usersManager');
-            expect(await pageWrap.screenshot()).to.matchImage('admin_add_user_not_exists');
+            expect(await page.screenshotSelector('.usersManager')).to.matchImage('admin_add_user_not_exists');
         });
     });
 });
